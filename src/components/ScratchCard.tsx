@@ -95,7 +95,7 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
     const percentage = calculateScratchPercentage();
     setScratchPercentage(percentage);
 
-    if (percentage > 50 && !isRevealed) {
+    if (percentage > 20 && !isRevealed) {
       setIsRevealed(true);
       // Clear remaining scratch layer
       ctx.clearRect(0, 0, width, height);
