@@ -22,30 +22,32 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Create gradient scratch layer
+    // Create metallic silver gradient
     const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, '#c0c0c0');
-    gradient.addColorStop(0.5, '#d4d4d4');
-    gradient.addColorStop(1, '#a8a8a8');
+    gradient.addColorStop(0, '#b8b8b8');
+    gradient.addColorStop(0.3, '#d0d0d0');
+    gradient.addColorStop(0.5, '#e8e8e8');
+    gradient.addColorStop(0.7, '#d0d0d0');
+    gradient.addColorStop(1, '#b8b8b8');
     
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    // Add scratch pattern texture
-    ctx.globalAlpha = 0.3;
-    for (let i = 0; i < width; i += 4) {
-      for (let j = 0; j < height; j += 4) {
-        if (Math.random() > 0.5) {
-          ctx.fillStyle = '#b0b0b0';
+    // Add scratch texture
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < width; i += 3) {
+      for (let j = 0; j < height; j += 3) {
+        if (Math.random() > 0.6) {
+          ctx.fillStyle = Math.random() > 0.5 ? '#c0c0c0' : '#a8a8a8';
           ctx.fillRect(i, j, 2, 2);
         }
       }
     }
     ctx.globalAlpha = 1;
 
-    // Add "SCRATCH HERE" text
-    ctx.fillStyle = '#888';
-    ctx.font = 'bold 14px DM Sans';
+    // Add "SCRATCH TO REVEAL" text
+    ctx.fillStyle = '#777';
+    ctx.font = 'bold 12px DM Sans';
     ctx.textAlign = 'center';
     ctx.fillText('✨ SCRATCH TO REVEAL ✨', width / 2, height / 2);
   }, [width, height]);
@@ -81,10 +83,10 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
 
     ctx.globalCompositeOperation = 'destination-out';
     
-    // Create circular scratch effect
-    const radius = 25;
+    const radius = 28;
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
     gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
+    gradient.addColorStop(0.8, 'rgba(0, 0, 0, 0.8)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
     
     ctx.fillStyle = gradient;
@@ -95,9 +97,8 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
     const percentage = calculateScratchPercentage();
     setScratchPercentage(percentage);
 
-    if (percentage > 50 && !isRevealed) {
+    if (percentage > 45 && !isRevealed) {
       setIsRevealed(true);
-      // Clear remaining scratch layer
       ctx.clearRect(0, 0, width, height);
       onReveal?.();
     }
@@ -147,18 +148,18 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
     >
       {/* Revealed content underneath */}
       <div 
-        className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-4 transition-all duration-500 ${
+        className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary via-primary to-[hsl(145,72%,38%)] text-primary-foreground p-4 transition-all duration-500 ${
           isRevealed ? 'animate-scale-in' : ''
         }`}
       >
-        <span className="text-xs font-medium opacity-80 mb-1">{brandName}</span>
-        <span className="text-2xl font-bold mb-2">{discount}</span>
-        <div className="bg-card/20 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary-foreground/20">
-          <span className="text-xs opacity-80">Code:</span>
-          <p className="text-lg font-bold tracking-wider">{couponCode}</p>
+        <span className="text-[10px] font-medium opacity-80 mb-0.5">{brandName}</span>
+        <span className="text-xl font-bold mb-1">{discount}</span>
+        <div className="bg-primary-foreground/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-primary-foreground/30">
+          <span className="text-[10px] opacity-80">Code:</span>
+          <p className="text-base font-bold tracking-wider">{couponCode}</p>
         </div>
         {isRevealed && (
-          <button className="mt-3 bg-primary-foreground text-primary px-6 py-2 rounded-full text-sm font-semibold hover:scale-105 transition-transform">
+          <button className="mt-2 bg-primary-foreground text-primary px-5 py-1.5 rounded-full text-xs font-semibold hover:scale-105 transition-transform shadow-lg">
             Claim Now
           </button>
         )}
@@ -183,8 +184,8 @@ const ScratchCard = ({ width, height, couponCode, discount, brandName, onReveal 
 
       {/* Progress indicator */}
       {!isRevealed && scratchPercentage > 0 && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-foreground/80 text-background text-xs px-2 py-1 rounded-full">
-          {Math.round(scratchPercentage)}% revealed
+        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 bg-foreground/80 text-card text-[10px] px-2 py-0.5 rounded-full">
+          {Math.round(scratchPercentage)}%
         </div>
       )}
     </div>
