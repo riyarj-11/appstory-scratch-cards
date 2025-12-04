@@ -1,19 +1,37 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface PhoneMockupProps {
   children: ReactNode;
 }
 
 const PhoneMockup = ({ children }: PhoneMockupProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="relative opacity-0 animate-intro-phone delay-300">
+    <div 
+      className={`relative transition-all duration-1000 ease-out ${
+        isVisible 
+          ? 'opacity-100 translate-y-0 rotate-0 scale-100' 
+          : 'opacity-0 translate-y-32 -rotate-3 scale-90'
+      }`}
+      style={{
+        transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+      }}
+    >
       {/* Glow effect behind phone */}
-      <div className="absolute -inset-8 bg-gradient-to-b from-primary/20 to-transparent rounded-full blur-3xl" />
+      <div className={`absolute -inset-8 bg-gradient-to-b from-primary/10 to-transparent rounded-full blur-3xl transition-opacity duration-1000 delay-500 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`} />
       
       {/* Phone frame */}
       <div className="relative bg-[#1a1a1a] rounded-[3rem] p-3 shadow-2xl">
         {/* Screen bezel */}
-        <div className="relative bg-card rounded-[2.5rem] overflow-hidden">
+        <div className="relative bg-white rounded-[2.5rem] overflow-hidden">
           {/* Dynamic Island / Notch */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
             <div className="bg-[#1a1a1a] w-28 h-8 rounded-full flex items-center justify-center gap-3 px-3">
